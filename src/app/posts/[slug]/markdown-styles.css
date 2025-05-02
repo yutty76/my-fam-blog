@@ -1,0 +1,245 @@
+/* Markdown コンテンツのスタイル */
+.markdown-content {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+/* 見出し */
+.markdown-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #111;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+}
+
+.markdown-content h2 {
+  font-size: 1.7rem;
+  font-weight: 600;
+  margin-top: 1.8rem;
+  margin-bottom: 1rem;
+  color: #111;
+  border-left: 4px solid #3b82f6;
+  padding-left: 0.8rem;
+}
+
+.markdown-content h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+/* 段落 */
+.markdown-content p {
+  margin-bottom: 1.2rem;
+}
+
+/* リスト */
+.markdown-content ul, 
+.markdown-content ol {
+  margin-bottom: 1.2rem;
+  padding-left: 1.5rem;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* 強調 */
+.markdown-content strong {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* 水平線 */
+.markdown-content hr {
+  height: 1px;
+  background-color: #e5e7eb;
+  border: none;
+  margin: 2rem 0;
+}
+
+/* テーブル */
+.md-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 2rem 0;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.md-th {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.95rem;
+  border: none;
+  white-space: nowrap;
+}
+
+.md-td {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+  vertical-align: top;
+}
+
+/* 最後の行のボーダーを削除 */
+.markdown-content tr:last-child .md-td {
+  border-bottom: none;
+}
+
+.markdown-content tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.markdown-content tr:hover {
+  background-color: #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+/* 引用 */
+.md-quote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  color: #4b5563;
+  font-style: italic;
+  margin: 1.5rem 0;
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* リンク */
+.md-link {
+  color: #2563eb;
+  text-decoration: none;
+  border-bottom: 1px dotted #2563eb;
+}
+
+.md-link:hover {
+  border-bottom: 1px solid #2563eb;
+}
+
+/* テーブル内の画像 */
+.markdown-content table img {
+  max-height: 200px;
+  width: auto;
+  margin: 0 auto;
+}
+
+/* テーブルスタイル */
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.markdown-content th {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+}
+
+.markdown-content td {
+  border-top: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  vertical-align: top;
+}
+
+/* テーブル内の画像 */
+.markdown-content table img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 0 auto;
+  display: block;
+}
+
+.markdown-content td p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* テーブルの画像サイズ調整 */
+.markdown-content td img {
+  max-height: 200px;
+  width: auto;
+}
+
+/* テーブルのレスポンシブ対応強化 */
+@media (max-width: 768px) {
+  .markdown-content table {
+    table-layout: fixed;
+  }
+  
+  .markdown-content td {
+    word-break: break-word;
+  }
+}
+
+/* 記事内の画像 */
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 1.5rem auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 画像キャプション（あれば） */
+.markdown-content img + em {
+  display: block;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .markdown-content {
+    font-size: 1rem;
+  }
+  
+  .md-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* テーブル内の画像用スタイル */
+.md-table img {
+  max-width: 150px;
+  max-height: 150px;
+  object-fit: cover;
+  margin: 0 auto 0.5rem auto;
+  display: block;
+}
+
+/* テーブルのレスポンシブ対応 */
+@media (max-width: 768px) {
+  .md-table {
+    display: block;
+    overflow-x: auto;
+  }
+}

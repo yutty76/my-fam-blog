@@ -1,0 +1,17 @@
+# デフォルトで全てのテキストファイルの改行コードをLFに設定
+* text=auto eol=lf
+
+# Windowsバッチスクリプトは常にCRLFとして扱う
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# バイナリファイルが変更されないように明示的に指定
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
