@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image'; // Imageコンポーネントをインポート
+// import Image from 'next/image'; // 一時的にコメントアウト
 import { FiArrowRight } from 'react-icons/fi';
 
 interface ProfileCardProps {
@@ -22,16 +22,26 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = f
           className={`relative shrink-0 rounded-full overflow-hidden bg-gray-200`} 
           style={{ width: imageSize, height: imageSize }} // サイズを動的に設定
         >
-          {/* 画像パスは実際のプロジェクトに合わせて変更してください */}
-          <Image 
-            src="/profile-img.png" // ファイル名に合わせて小文字に変更
+          {/* --- デバッグ用: next/image を img に一時変更 --- */}
+          <img 
+            src="/profile-img.png" 
             alt="OB夫婦 プロフィール写真"
-            width={imageSize} // width を設定
-            height={imageSize} // height を設定
-            className="object-cover" // 親要素に合わせてカバー
-            priority // 必要に応じてpriorityを設定 (例: LCPになる場合)
-            
+            width={imageSize}
+            height={imageSize}
+            className="object-cover w-full h-full" // width/height属性とCSSでサイズを指定
+            // loading="lazy" // 必要に応じて追加
           />
+          {/* 
+          <Image 
+            src="/profile-img.png" 
+            alt="OB夫婦 プロフィール写真"
+            width={imageSize} 
+            height={imageSize} 
+            className="object-cover" 
+            priority 
+          /> 
+          */}
+          {/* --- デバッグ用ここまで --- */}
         </div>
         
         <div className="flex-1">
