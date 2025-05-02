@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import { FiTwitter, FiInstagram, FiYoutube, FiMail } from 'react-icons/fi';
+import { FiTwitter, FiInstagram, FiYoutube, FiMail, FiArrowRight } from 'react-icons/fi';
 
 interface ProfileCardProps {
   className?: string;
@@ -32,20 +32,21 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = f
         
         <div className="flex-1">
           {/* 名前と肩書き */}
-          <h3 className={`${isCompact ? 'text-lg' : 'text-xl'} font-bold mb-1`}>山田 健太</h3>
+          <h3 className={`${isCompact ? 'text-lg' : 'text-xl'} font-bold mb-1`}>OB夫婦ブログ</h3>
           <p className={`text-gray-600 ${isCompact ? 'text-sm mb-2' : 'mb-3'}`}>
-            パーソナルトレーナー / 栄養士 / フィットネスブロガー
+            IT業界 × 筋トレ愛好家夫婦
           </p>
           
           {/* プロフィール本文 - コンパクトモードでは短めに */}
           {!isCompact ? (
             <p className="text-gray-700">
-              10年以上のトレーニング経験を持つフィットネス愛好家。科学的根拠に基づいた情報発信をモットーに、
-              誰もが健康的な生活を送れるようサポートします。
+              旦那(筋トレ歴5年)とキッチン担当の妻(筋トレ歴4年)がお送りするブログ。
+              IT業界で働きながら、健康的な生活と筋トレの楽しさをシェアします。
+              夫婦で実践している「忙しくても続けられる」筋トレ法や、美味しく栄養たっぷりの簡単レシピを紹介しています。
             </p>
           ) : (
             <p className="text-gray-700 text-sm">
-              科学的根拠に基づいた健康・フィットネス情報を発信。
+              IT業界で働く筋トレ愛好家夫婦。トレーニング情報と手軽な高タンパクレシピを発信中。
             </p>
           )}
           
@@ -65,14 +66,16 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = f
             </a>
           </div>
           
-          {/* プロフィールページへのリンク（コンパクトモードのみ） */}
-          {isCompact && (
-            <div className="mt-2">
-              <Link href="/profile" className="text-sm text-blue-600 hover:underline">
-                プロフィールの詳細を見る →
-              </Link>
-            </div>
-          )}
+          {/* プロフィールページへのリンク（常に表示） */}
+          <div className={`${isCompact ? 'mt-2' : 'mt-4'}`}>
+            <Link 
+              href="/profile" 
+              className={`${isCompact ? 'text-sm' : ''} text-blue-600 hover:text-blue-800 flex items-center w-fit transition-colors`}
+            >
+              <span>プロフィールの詳細を見る</span>
+              <FiArrowRight className="ml-1" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>
