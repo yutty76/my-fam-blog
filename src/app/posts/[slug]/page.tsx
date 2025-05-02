@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import React from "react";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw'; // HTMLタグを処理するためのプラグインを追加
 import Link from 'next/link';
 import { FiCalendar, FiTag, FiTwitter, FiFacebook } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
@@ -110,17 +111,33 @@ function prepareMarkdownContent(html: string): string {
   if (!html) return '';
 
   let result = html;
+  
+  // figureタグ内の画像を処理
+  result = result.replace(/<figure>([\s\S]*?)<\/figure>/g, (match, content) => {
+    // 画像タグを抽出
+    const imgMatch = content.match(/!\[(.*?)\]\((.*?)\)/);
+    if (imgMatch) {
+      // すでにマークダウン形式になっている場合はそのまま返す
+      return imgMatch[0];
+    }
+    
+    // img タグを処理
+    const imgTagMatch = content.match(/<img\s+src="([^"]+)"[^>]*>/);
+    if (imgTagMatch) {
+      return `![image](${imgTagMatch[1]})`;
+    }
+    
+    // どちらにもマッチしなければ元のコンテンツを返す
+    return content;
+  });
 
-  // 1. <p>タグで囲まれたテーブル行 (|...|) を処理 -> 行内容 + '\n' に置換
-  //    正規表現: <p> タグ、任意の空白、パイプ文字、任意の文字（非貪欲）、パイプ文字、任意の空白、</p> タグ
-  //    $1 でパイプ文字を含む行内容を取得
+  // 1. <p>タグで囲まれたテーブル行 (|...|) を処理
   result = result.replace(/<p>\s*(\|.*?\|)\s*<\/p>/g, '$1\n');
 
-  // 2. 残りの<p>タグを処理 -> 内容 + '\n\n' に置換
-  //    [\s\S]*? で改行を含む任意の内容にマッチ
+  // 2. 残りの<p>タグを処理
   result = result.replace(/<p>([\s\S]*?)<\/p>/g, '$1\n\n');
 
-  // 3. HTMLエンティティをデコード (&lt;strong&gt; -> <strong> など)
+  // 3. HTMLエンティティをデコード
   const entities: Record<string, string> = {
     '&lt;': '<',
     '&gt;': '>',
@@ -146,20 +163,17 @@ function prepareMarkdownContent(html: string): string {
       return content.trim().split('\n').map((line: string) => `> ${line.trim()}`).join('\n');
     })
     .replace(/<hr\s*\/?>/g, '---')             // 水平線
-    .replace(/<li>(.*?)<\/li>/g, '- $1')       // リスト項目 (単純なケース)
+    .replace(/<li>(.*?)<\/li>/g, '- $1')       // リスト項目
     .replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/g, '[$2]($1)'); // リンク
 
-  // 5. 連続する改行を調整し、前後の空白をトリム
-  //    テーブル行の後の単一改行と、他の要素の後のダブル改行が混在するため、
-  //    3つ以上の連続改行を2つに制限する
-  result = result.replace(/\n{3,}/g, '\n\n').trim();
+  // 5. 画像タグを処理 (まだ変換されていない場合)
+  result = result.replace(/<img\s+src="([^"]+)"[^>]*>/g, '![image]($1)');
 
-  // テーブル区切り行の直後の不要な改行を削除する可能性のある追加処理
-  // 例: |---| の後に \n\n がある場合、\n にする
+  // 6. 連続する改行を調整し、前後の空白をトリム
+  result = result.replace(/\n{3,}/g, '\n\n').trim();
   result = result.replace(/(\|\s*-{3,}\s*\|)\n\n/g, '$1\n');
 
-
-  console.log("Markdown準備後:", result.substring(0, 500)); // ログ出力文字数を増やす
+  console.log("Markdown準備後:", result.substring(0, 500));
 
   return result;
 }
@@ -316,12 +330,28 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
           // マークダウンまたは普通の文章の場合はReactMarkdownで表示
           <ReactMarkdown 
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]} // HTMLタグを処理するプラグインを追加
             components={{
               table: (props) => <table className="md-table" {...props} />,
               th: (props) => <th className="md-th" {...props} />,
               td: (props) => <td className="md-td" {...props} />,
               blockquote: (props) => <blockquote className="md-quote" {...props} />,
-              a: (props) => <a className="md-link" {...props} />
+              a: (props) => <a className="md-link" {...props} />,
+              // 画像を適切に処理するためのコンポーネント - altテキストを表示しないように修正
+              img: (props) => (
+                <div className="my-4">
+                  <img 
+                    src={props.src} 
+                    alt={props.alt || ''} 
+                    className="mx-auto rounded-lg shadow-md"
+                    style={{ maxWidth: '100%' }} 
+                  />
+                </div>
+              ),
+              // figureタグを処理するコンポーネント
+              figure: (props) => (
+                <figure className="my-6">{props.children}</figure>
+              )
             }}
           >
             {markdownContent} 
