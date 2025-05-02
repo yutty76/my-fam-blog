@@ -2,9 +2,16 @@
 const nextConfig = {
   reactStrictMode: true, // 必要に応じて他の設定も維持・追加
   images: {
-    // ローカル画像の場合、通常ここにドメイン指定は不要
-    // Netlifyプラグインがローダーを自動設定することを期待
-    // 問題が解決しない場合、loader: 'default' などを試すことも検討
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.microcms-assets.io',
+        port: '',
+        pathname: '/assets/**', // microCMSのアセットパスに合わせて調整可能
+      },
+      // 他に許可したい外部ドメインがあればここに追加
+      // 例: { protocol: 'https', hostname: 'example.com' }
+    ],
   },
   // 他の既存の設定があればここに追加
 };

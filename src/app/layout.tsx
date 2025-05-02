@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://peaceful-brigadeiros-6717be.netlify.app/'), // <--- この行を追加 (URLは実際のドメインに置き換える)
   title: "筋トレブログ | 効果的なトレーニングと知識を発信",
   description: "初心者から上級者まで役立つ筋トレ情報・メニュー・サプリ・器具レビューなどを発信するブログです。",
   openGraph: {

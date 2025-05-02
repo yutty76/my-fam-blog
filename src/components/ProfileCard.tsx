@@ -24,7 +24,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = f
         >
           {/* 画像パスは実際のプロジェクトに合わせて変更してください */}
           <Image 
-            src="/profileimg.png" // ファイル名に合わせて小文字に変更
+            src="/profile-img.png" // ファイル名に合わせて小文字に変更
             alt="OB夫婦 プロフィール写真"
             width={imageSize} // width を設定
             height={imageSize} // height を設定
