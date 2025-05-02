@@ -3,18 +3,38 @@ import { useEffect, useState } from "react";
 import React from "react"; // Reactをインポート
 import Link from "next/link";
 import Image from "next/image";
-import { FiClock, FiTag, FiChevronLeft, FiFilter } from "react-icons/fi";
+import { FiClock, FiChevronLeft, FiFilter } from "react-icons/fi";
 
 const SERVICE_ID = process.env.NEXT_PUBLIC_MICROCMS_SERVICE_ID;
 const API_KEY = process.env.NEXT_PUBLIC_MICROCMS_API_KEY;
 const ENDPOINT = `https://${SERVICE_ID}.microcms.io/api/v1/blogs`;
 const CATEGORY_ENDPOINT = `https://${SERVICE_ID}.microcms.io/api/v1/categories`;
 
+// 型定義
+type Thumbnail = {
+  url: string;
+};
+
+type Category = {
+  id: string;
+  name: string;
+  description?: string;
+};
+
+type Post = {
+  id: string;
+  title: string;
+  description?: string;
+  publishedAt: string;
+  eyecatch?: Thumbnail;
+  thumbnail?: Thumbnail;
+};
+
 export default function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
   // React.use()でparamsをunwrap
   const { id } = React.use(params);
-  const [posts, setPosts] = useState<any[]>([]);
-  const [category, setCategory] = useState<any>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   

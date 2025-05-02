@@ -10,9 +10,28 @@ const ENDPOINT = `https://${SERVICE_ID}.microcms.io/api/v1/blogs`;
 
 const POSTS_PER_PAGE = 9; // 1ページあたりの表示記事数
 
+// 型定義
+type Thumbnail = {
+  url: string;
+};
+
+type Category = {
+  id: string;
+  name: string;
+};
+
+type Post = {
+  id: string;
+  title: string;
+  description?: string;
+  publishedAt: string;
+  thumbnail?: Thumbnail;
+  category?: Category;
+};
+
 export default function ArchivePage() {
-  const [posts, setPosts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
@@ -88,7 +107,7 @@ export default function ArchivePage() {
   const maxPageDisplay = 5;
   
   let startPage = Math.max(currentPage - Math.floor(maxPageDisplay / 2), 1);
-  let endPage = Math.min(startPage + maxPageDisplay - 1, totalPages);
+  const endPage = Math.min(startPage + maxPageDisplay - 1, totalPages);
   
   if (endPage - startPage + 1 < maxPageDisplay) {
     startPage = Math.max(endPage - maxPageDisplay + 1, 1);

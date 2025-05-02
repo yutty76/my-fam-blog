@@ -76,9 +76,24 @@ function extractMarkdownFromHTML(html: string): string {
     .trim();
 }
 
+// 投稿データの型定義
+type Category = {
+  id: string;
+  name: string;
+};
+
+type Post = {
+  id: string;
+  title: string;
+  publishedAt: string;
+  content?: string;
+  category?: Category;
+  // 必要に応じて他のプロパティを追加
+};
+
 export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = React.use(params);
-  const [post, setPost] = useState<any>(null);
+  const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentUrl, setCurrentUrl] = useState("");
@@ -150,11 +165,11 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
         <ReactMarkdown 
           remarkPlugins={[remarkGfm]}
           components={{
-            table: ({node, ...props}) => <table className="md-table" {...props} />,
-            th: ({node, ...props}) => <th className="md-th" {...props} />,
-            td: ({node, ...props}) => <td className="md-td" {...props} />,
-            blockquote: ({node, ...props}) => <blockquote className="md-quote" {...props} />,
-            a: ({node, ...props}) => <a className="md-link" {...props} />
+            table: (props) => <table className="md-table" {...props} />,
+            th: (props) => <th className="md-th" {...props} />,
+            td: (props) => <td className="md-td" {...props} />,
+            blockquote: (props) => <blockquote className="md-quote" {...props} />,
+            a: (props) => <a className="md-link" {...props} />
           }}
         >
           {markdownContent} 

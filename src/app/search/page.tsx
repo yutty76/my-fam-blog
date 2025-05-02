@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,10 +8,24 @@ const SERVICE_ID = process.env.NEXT_PUBLIC_MICROCMS_SERVICE_ID;
 const API_KEY = process.env.NEXT_PUBLIC_MICROCMS_API_KEY;
 const ENDPOINT = `https://${SERVICE_ID}.microcms.io/api/v1/blogs`;
 
-export default function SearchPage() {
+// 記事データの型定義
+type Thumbnail = {
+  url: string;
+};
+
+type Post = {
+  id: string;
+  title: string;
+  description?: string;
+  publishedAt: string;
+  thumbnail?: Thumbnail;
+};
+
+// 検索パラメータを取得するコンポーネント
+function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +49,7 @@ export default function SearchPage() {
   }, [query]);
 
   return (
-    <main className="container mx-auto px-4 py-12">
+    <>
       <h1 className="text-3xl font-bold mb-8">「{query}」の検索結果</h1>
       
       {loading ? (
@@ -82,6 +96,17 @@ export default function SearchPage() {
           </Link>
         </div>
       )}
+    </>
+  );
+}
+
+// メインのページコンポーネント
+export default function SearchPage() {
+  return (
+    <main className="container mx-auto px-4 py-12">
+      <Suspense fallback={<p>読み込み中...</p>}>
+        <SearchResults />
+      </Suspense>
     </main>
   );
 }
