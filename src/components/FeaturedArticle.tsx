@@ -21,6 +21,7 @@ const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ article }) => {
             height={500}
             className="w-full h-64 md:h-full object-cover"
             priority={true}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : article.thumbnail ? (
           <Image
@@ -30,6 +31,7 @@ const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ article }) => {
             height={500}
             className="w-full h-64 md:h-full object-cover"
             priority={true}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="bg-gray-300 w-full h-64 md:h-full flex items-center justify-center">

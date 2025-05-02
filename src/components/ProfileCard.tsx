@@ -1,33 +1,37 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import { FiTwitter, FiInstagram, FiYoutube, FiMail, FiArrowRight } from 'react-icons/fi';
+import Image from 'next/image'; // Imageコンポーネントをインポート
+import { FiArrowRight } from 'react-icons/fi';
 
 interface ProfileCardProps {
   className?: string;
   isCompact?: boolean; // コンパクトモードかどうか（記事下用）
+  hideProfileLink?: boolean; // プロフィールリンクを非表示にするか
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = false }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = false, hideProfileLink = false }) => {
+  // 画像サイズを決定
+  const imageSize = isCompact ? 80 : 128; // コンパクトなら80px, 通常なら128px
+
   return (
     <div className={`bg-white rounded-lg shadow-md ${isCompact ? 'p-4' : 'p-6'} ${className}`}>
       <div className={`flex ${isCompact ? 'flex-row items-center' : 'flex-col md:flex-row items-center'} gap-4 md:gap-6`}>
-        {/* プロフィール写真 */}
-        <div className={`${isCompact ? 'w-20 h-20' : 'w-32 h-32'} rounded-full overflow-hidden shrink-0 bg-gray-200 flex items-center justify-center`}>
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            strokeWidth={1.5} 
-            stroke="currentColor" 
-            className={`${isCompact ? 'w-8 h-8' : 'w-12 h-12'} text-gray-400`}
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" 
-            />
-          </svg>
+        {/* プロフィール写真 - SVGをImageコンポーネントに置き換え */}
+        <div 
+          className={`relative shrink-0 rounded-full overflow-hidden bg-gray-200`} 
+          style={{ width: imageSize, height: imageSize }} // サイズを動的に設定
+        >
+          {/* 画像パスは実際のプロジェクトに合わせて変更してください */}
+          <Image 
+            src="/profileImg.png" // 画像のパスを指定
+            alt="OB夫婦 プロフィール写真"
+            width={imageSize} // width を設定
+            height={imageSize} // height を設定
+            className="object-cover" // 親要素に合わせてカバー
+            priority // 必要に応じてpriorityを設定 (例: LCPになる場合)
+            
+          />
         </div>
         
         <div className="flex-1">
@@ -50,7 +54,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = f
             </p>
           )}
           
-          {/* ソーシャルリンク */}
+          {/* ソーシャルリンク
           <div className={`${isCompact ? 'mt-2' : 'mt-4'} flex gap-3`}>
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 transition-colors" aria-label="Twitter">
               <FiTwitter size={isCompact ? 16 : 20} />
@@ -64,18 +68,20 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ className = '', isCompact = f
             <a href="mailto:contact@example.com" className="text-gray-600 hover:text-gray-800 transition-colors" aria-label="メール">
               <FiMail size={isCompact ? 16 : 20} />
             </a>
-          </div>
+          </div> */}
           
-          {/* プロフィールページへのリンク（常に表示） */}
-          <div className={`${isCompact ? 'mt-2' : 'mt-4'}`}>
-            <Link 
-              href="/profile" 
-              className={`${isCompact ? 'text-sm' : ''} text-blue-600 hover:text-blue-800 flex items-center w-fit transition-colors`}
-            >
-              <span>プロフィールの詳細を見る</span>
-              <FiArrowRight className="ml-1" />
-            </Link>
-          </div>
+          {/* プロフィールページへのリンク（hideProfileLinkがfalseの場合のみ表示） */}
+          {!hideProfileLink && (
+            <div className={`${isCompact ? 'mt-2' : 'mt-4'}`}>
+              <Link 
+                href="/profile" 
+                className={`${isCompact ? 'text-sm' : ''} text-blue-600 hover:text-blue-800 flex items-center w-fit transition-colors`}
+              >
+                <span>プロフィールの詳細を見る</span>
+                <FiArrowRight className="ml-1" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -43,6 +43,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, priority = false }) 
               fill
               priority={priority}
               className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
             />
           ) : article.thumbnail ? (
             <Image
@@ -51,6 +52,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, priority = false }) 
               fill
               priority={priority}
               className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
             <div className="bg-gray-200 w-full h-full flex items-center justify-center">

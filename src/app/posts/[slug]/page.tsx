@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { FiCalendar, FiTag, FiTwitter, FiFacebook } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
 import './markdown-styles.css';
+import './design-styles.css'; // デザインスタイルのインポート
 
 // クライアントコンポーネントを動的インポート
 const ProfileCard = dynamic(() => import('@/components/ProfileCard'), {
@@ -76,11 +77,102 @@ function extractMarkdownFromHTML(html: string): string {
     .trim();
 }
 
+// HTMLエスケープされたタグをデコードする関数 (pタグ除去ロジックを削除)
+function decodeHtmlEntities(html: string): string {
+  if (!html) return '';
+  
+  let result = html;
+  
+  // 最も一般的なHTMLエンティティを置換
+  const entities: Record<string, string> = {
+    '&lt;': '<',
+    '&gt;': '>',
+    '&amp;': '&',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&nbsp;': ' '
+    // 必要に応じて他のエンティティを追加
+  };
+  
+  // エンティティをすべて置換
+  Object.entries(entities).forEach(([entity, char]) => {
+    const regex = new RegExp(entity, 'g');
+    result = result.replace(regex, char);
+  });
+  
+  console.log("HTMLエンティティデコード後:", result.substring(0, 200));
+  
+  return result;
+}
+
+// Markdownコンテンツからpタグを除去し、基本的なHTMLをMarkdownに変換する関数
+function prepareMarkdownContent(html: string): string {
+  if (!html) return '';
+
+  let result = html;
+
+  // 1. <p>タグで囲まれたテーブル行 (|...|) を処理 -> 行内容 + '\n' に置換
+  //    正規表現: <p> タグ、任意の空白、パイプ文字、任意の文字（非貪欲）、パイプ文字、任意の空白、</p> タグ
+  //    $1 でパイプ文字を含む行内容を取得
+  result = result.replace(/<p>\s*(\|.*?\|)\s*<\/p>/g, '$1\n');
+
+  // 2. 残りの<p>タグを処理 -> 内容 + '\n\n' に置換
+  //    [\s\S]*? で改行を含む任意の内容にマッチ
+  result = result.replace(/<p>([\s\S]*?)<\/p>/g, '$1\n\n');
+
+  // 3. HTMLエンティティをデコード (&lt;strong&gt; -> <strong> など)
+  const entities: Record<string, string> = {
+    '&lt;': '<',
+    '&gt;': '>',
+    '&amp;': '&',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&nbsp;': ' '
+  };
+  Object.entries(entities).forEach(([entity, char]) => {
+    const regex = new RegExp(entity, 'g');
+    result = result.replace(regex, char);
+  });
+
+  // 4. 基本的なHTMLタグをMarkdown構文に変換
+  result = result
+    .replace(/<strong>(.*?)<\/strong>/g, '**$1**') // 太字
+    .replace(/<em>(.*?)<\/em>/g, '*$1*')       // 斜体
+    .replace(/<h1>(.*?)<\/h1>/g, '# $1')       // 見出し1
+    .replace(/<h2>(.*?)<\/h2>/g, '## $1')      // 見出し2
+    .replace(/<h3>(.*?)<\/h3>/g, '### $1')     // 見出し3
+    .replace(/<blockquote>([\s\S]*?)<\/blockquote>/g, (match, content) => { // 引用
+      // 引用内の各行の先頭に > を追加
+      return content.trim().split('\n').map((line: string) => `> ${line.trim()}`).join('\n');
+    })
+    .replace(/<hr\s*\/?>/g, '---')             // 水平線
+    .replace(/<li>(.*?)<\/li>/g, '- $1')       // リスト項目 (単純なケース)
+    .replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/g, '[$2]($1)'); // リンク
+
+  // 5. 連続する改行を調整し、前後の空白をトリム
+  //    テーブル行の後の単一改行と、他の要素の後のダブル改行が混在するため、
+  //    3つ以上の連続改行を2つに制限する
+  result = result.replace(/\n{3,}/g, '\n\n').trim();
+
+  // テーブル区切り行の直後の不要な改行を削除する可能性のある追加処理
+  // 例: |---| の後に \n\n がある場合、\n にする
+  result = result.replace(/(\|\s*-{3,}\s*\|)\n\n/g, '$1\n');
+
+
+  console.log("Markdown準備後:", result.substring(0, 500)); // ログ出力文字数を増やす
+
+  return result;
+}
+
 // 投稿データの型定義
 type Category = {
   id: string;
   name: string;
 };
+
+// 投稿の種類を定義
+type ArticleType = '普通の文章' | 'マークダウン' | 'HTML';
+type Design = '1' | '2' | '3' | '4';
 
 type Post = {
   id: string;
@@ -88,6 +180,8 @@ type Post = {
   publishedAt: string;
   content?: string;
   category?: Category;
+  design?: Design[]; // 配列形式に対応
+  articleType?: ArticleType[]; // 配列形式に対応
   // 必要に応じて他のプロパティを追加
 };
 
@@ -97,7 +191,18 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentUrl, setCurrentUrl] = useState("");
-  const [markdownContent, setMarkdownContent] = useState(""); // 追加: markdownContent の状態変数
+  const [markdownContent, setMarkdownContent] = useState(""); // Markdown用コンテンツ
+  const [contentToDisplay, setContentToDisplay] = useState(""); // 表示用コンテンツ
+
+  // 配列または単一値からデザイン値を取得 (APIレスポンスが配列のため修正)
+  const getDesignValue = (design: Design[] | undefined): Design => {
+    return design && design.length > 0 ? design[0] : '1'; // 配列の最初の要素、なければデフォルト
+  };
+  
+  // 配列または単一値から記事タイプを取得 (APIレスポンスが配列のため修正)
+  const getArticleTypeValue = (articleType: ArticleType[] | undefined): ArticleType => {
+    return articleType && articleType.length > 0 ? articleType[0] : '普通の文章'; // 配列の最初の要素、なければデフォルト
+  };
 
   useEffect(() => {
     // クライアントサイドでのみwindowオブジェクトを使用
@@ -118,13 +223,40 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
         return res.json();
       })
       .then(data => {
+        console.log("APIレスポンス:", data); // APIレスポンス全体をログ出力
         setPost(data);
-        // HTMLタグからMarkdownを抽出
+        
+        // 文章タイプに応じたコンテンツ処理
         if (data.content) {
-          const markdown = extractMarkdownFromHTML(data.content);
-          console.log("変換後のMarkdown:", markdown); // デバッグ用
-          setMarkdownContent(markdown);
+          // 配列から記事タイプを取得
+          const currentArticleType = getArticleTypeValue(data.articleType);
+          console.log("現在の記事タイプ:", currentArticleType); // 取得した記事タイプをログ出力
+
+          switch (currentArticleType) {
+            case 'マークダウン':
+              // pタグを除去し、HTMLエンティティをデコードし、基本HTMLをMarkdownに変換
+              const preparedMarkdown = prepareMarkdownContent(data.content);
+              setMarkdownContent(preparedMarkdown);
+              setContentToDisplay('');
+              break;
+            case 'HTML':
+              console.log("HTML処理開始:", data.content.substring(0, 100) + "...");
+              // HTMLエンティティのみデコード (pタグは保持)
+              const decodedHTML = decodeHtmlEntities(data.content);
+              setContentToDisplay(decodedHTML);
+              setMarkdownContent('');
+              break;
+            case '普通の文章':
+            default:
+              // 既存のHTMLからMarkdownへの変換処理
+              const markdown = extractMarkdownFromHTML(data.content);
+              console.log("変換後のMarkdown:", markdown);
+              setMarkdownContent(markdown);
+              setContentToDisplay('');
+              break;
+          }
         }
+        
         setLoading(false);
       })
       .catch(() => {
@@ -136,6 +268,21 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
   if (loading) return <div className="max-w-2xl mx-auto px-4 py-8">記事を読み込み中...</div>;
   if (error) return <div className="max-w-2xl mx-auto px-4 py-8 text-red-500">{error}</div>;
   if (!post) return null;
+
+  // デザインに応じたCSSクラスを取得 (ヘルパー関数を使用)
+  const getDesignClass = () => {
+    const designValue = getDesignValue(post.design); // ヘルパー関数で値を取得
+    switch (designValue) {
+      case '1': return 'design-1';
+      case '2': return 'design-2';
+      case '3': return 'design-3';
+      case '4': return 'design-4';
+      default: return 'design-1';
+    }
+  };
+  
+  // 記事タイプを取得 (ヘルパー関数を使用)
+  const currentArticleType = getArticleTypeValue(post.articleType);
 
   return (
     <main className="max-w-4xl mx-auto px-4 md:px-6 py-10">
@@ -159,21 +306,27 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
         )}
       </div>
       
-      {/* Markdownコンテンツ */}
-      <article className="markdown-content prose prose-lg prose-slate max-w-none mb-12">
-        {/* ReactMarkdownコンポーネント */}
-        <ReactMarkdown 
-          remarkPlugins={[remarkGfm]}
-          components={{
-            table: (props) => <table className="md-table" {...props} />,
-            th: (props) => <th className="md-th" {...props} />,
-            td: (props) => <td className="md-td" {...props} />,
-            blockquote: (props) => <blockquote className="md-quote" {...props} />,
-            a: (props) => <a className="md-link" {...props} />
-          }}
-        >
-          {markdownContent} 
-        </ReactMarkdown>
+      {/* コンテンツ表示 - デザインクラスを適用 */}
+      <article className={`markdown-content prose prose-lg prose-slate max-w-none mb-12 ${getDesignClass()}`}>
+        {/* 文章タイプに応じた表示 (ヘルパー関数で取得した値を使用) */}
+        {currentArticleType === 'HTML' ? (
+          // HTMLの場合はdangerouslySetInnerHTMLで表示
+          <div dangerouslySetInnerHTML={{ __html: contentToDisplay }} />
+        ) : (
+          // マークダウンまたは普通の文章の場合はReactMarkdownで表示
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm]}
+            components={{
+              table: (props) => <table className="md-table" {...props} />,
+              th: (props) => <th className="md-th" {...props} />,
+              td: (props) => <td className="md-td" {...props} />,
+              blockquote: (props) => <blockquote className="md-quote" {...props} />,
+              a: (props) => <a className="md-link" {...props} />
+            }}
+          >
+            {markdownContent} 
+          </ReactMarkdown>
+        )}
       </article>
       
       {/* シェアボタン */}

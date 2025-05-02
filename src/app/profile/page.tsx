@@ -16,8 +16,8 @@ export default function ProfilePage() {
         
         <h1 className="text-3xl md:text-4xl font-bold text-center mb-12">私たちについて</h1>
         
-        {/* プロフィールカード */}
-        <ProfileCard className="mb-10" />
+        {/* プロフィールカード - リンクを非表示にする */}
+        <ProfileCard className="mb-10" hideProfileLink={true} />
         
         {/* 経歴セクション */}
         <section className="bg-white rounded-lg shadow-md p-6 mb-8">

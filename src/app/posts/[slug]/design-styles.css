@@ -1,0 +1,142 @@
+/* デザインオプション用のスタイル */
+
+/* デザイン1: デフォルトスタイル (シンプル・モダン) */
+.design-1 {
+  color: #333;
+  line-height: 1.6;
+}
+
+.design-1 h1, .design-1 h2, .design-1 h3, .design-1 h4 {
+  color: #1a202c;
+}
+
+.design-1 a {
+  color: #3182ce;
+  text-decoration: none;
+}
+
+.design-1 a:hover {
+  text-decoration: underline;
+}
+
+/* デザイン2: ティール系アクセント */
+.design-2 {
+  color: #333;
+  line-height: 1.6;
+}
+
+.design-2 h1, .design-2 h2, .design-2 h3, .design-2 h4 {
+  color: #2c7a7b;
+}
+
+.design-2 a {
+  color: #38b2ac;
+  text-decoration: none;
+}
+
+.design-2 a:hover {
+  text-decoration: underline;
+}
+
+.design-2 blockquote {
+  border-left-color: #38b2ac;
+  background-color: #f0fdfa;
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  color: #555;
+}
+
+.design-2 code {
+  background-color: #e6fffa;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  color: #234e52;
+}
+
+/* デザイン3: ラベンダー系アクセント */
+.design-3 {
+  color: #333;
+  line-height: 1.6;
+}
+
+.design-3 h1, .design-3 h2, .design-3 h3, .design-3 h4 {
+  color: #553c9a;
+}
+
+.design-3 a {
+  color: #805ad5;
+  text-decoration: none;
+}
+
+.design-3 a:hover {
+  text-decoration: underline;
+}
+
+.design-3 blockquote {
+  border-left-color: #805ad5;
+  background-color: #fbfaff;
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  color: #555;
+}
+
+.design-3 code {
+  background-color: #f6f3ff;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  color: #44337a;
+}
+
+/* デザイン4: ビジネス・フォーマル (ネイビー系アクセント) */
+.design-4 {
+  color: #2d3748;
+  font-family: Georgia, serif;
+  line-height: 1.8;
+}
+
+.design-4 h1, .design-4 h2, .design-4 h3, .design-4 h4 {
+  color: #1a365d;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.design-4 a {
+  color: #2b6cb0;
+  text-decoration: none;
+}
+
+.design-4 a:hover {
+  text-decoration: underline;
+}
+
+.design-4 blockquote {
+  font-style: italic;
+  border-left-color: #2b6cb0;
+  background-color: #ebf8ff;
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  color: #4a5568;
+}
+
+.design-4 code {
+  background-color: #e3f2fd;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  color: #1a365d;
+}
+
+.design-4 table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.design-4 th {
+  background-color: #e2e8f0;
+  text-align: left;
+  font-weight: bold;
+}
+
+.design-4 td, .design-4 th {
+  border: 1px solid #cbd5e0;
+  padding: 0.5em 0.75em;
+}
