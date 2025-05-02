@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import { FiHome, FiUser, FiCode, FiBookOpen, FiHeart } from 'react-icons/fi';
+import { FiHome, FiCode, FiBookOpen, FiHeart } from 'react-icons/fi';
 import ProfileCard from '@/components/ProfileCard';
 
 export default function ProfilePage() {
