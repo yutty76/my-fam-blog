@@ -47,6 +47,8 @@ export async function generateMetadata(
      
       // これにより、<p>&nbsp;</p> のようなタグが後続の処理で不要な空白を残すことを防ぎます。
       processedText = processedText.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
+      // ★追加: <br>のみを含む空の<p>タグを削除
+      processedText = processedText.replace(/<p>\s*(?:<br\s*\/?>\s*)*<\/p>/gi, '');
 
       // 1. HTMLエンティティをデコード (主要なもののみ)
       const entities: Record<string, string> = {
