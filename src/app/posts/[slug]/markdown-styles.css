@@ -21,7 +21,7 @@
   font-size: 1.7rem;
   font-weight: 600;
   margin-top: 1.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1rem; /* h2のマージンは変更の必要がなければそのまま */
   color: #111;
   border-left: 4px solid #3b82f6;
   padding-left: 0.8rem;
@@ -30,14 +30,14 @@
 .markdown-content h3 {
   font-size: 1.4rem;
   font-weight: 600;
-  margin-top: 1.5rem;
-  margin-bottom: 0.8rem;
+  margin-top: 1rem; /* 1.5rem から 1rem に変更 */
+  margin-bottom: 0.5rem; /* 0.8rem から 0.5rem に変更 */
   color: #333;
 }
 
 /* 段落 */
 .markdown-content p {
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.8rem; /* 1.2rem から 0.8rem に変更 */
 }
 
 /* リスト */
@@ -142,7 +142,7 @@
 .markdown-content table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.5rem 0;
+  margin: 0.8rem 0; /* 1.5rem 0 から 0.8rem 0 に変更 */
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   overflow: hidden;

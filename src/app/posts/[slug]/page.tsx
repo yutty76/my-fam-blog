@@ -44,6 +44,10 @@ export async function generateMetadata(
       // contentSource (post.summary または post.content) が存在する場合の処理
       let processedText = contentSource;
 
+         // ★追加: 空の<p>タグや &nbsp; のみの<p>タグを削除
+      // これにより、<p>&nbsp;</p> のようなタグが後続の処理で不要な空白を残すことを防ぎます。
+      processedText = processedText.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
+
       // 1. HTMLエンティティをデコード (主要なもののみ)
       const entities: Record<string, string> = {
         '&lt;': '<',
@@ -76,10 +80,10 @@ export async function generateMetadata(
     }
 
     return {
-      title: `${post.title} | 筋トレブログ`,
+      title: `${post.title} | OB夫婦ブログ`,
       description: description, // SEOのため、検索結果に表示されうるページの要約
       openGraph: {
-        title: `${post.title} | 筋トレブログ`,
+        title: `${post.title} | OB夫婦ブログ`,
         description: description, // ソーシャルメディア共有時の説明文
         url: `https://peaceful-brigadeiros-6717be.netlify.app/posts/${slug}`, // 実際のドメインに合わせてください
         images: [
@@ -95,7 +99,7 @@ export async function generateMetadata(
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${post.title} | 筋トレブログ`,
+        title: `${post.title} | OB夫婦ブログ`,
         description: description,
         images: [
             // post.eyecatch?.url のような記事固有のアイキャッチ画像があればここに追加
