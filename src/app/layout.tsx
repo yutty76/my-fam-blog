@@ -14,19 +14,19 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://peaceful-brigadeiros-6717be.netlify.app/'), // <--- この行を追加 (URLは実際のドメインに置き換える)
-  title: "筋トレブログ | 効果的なトレーニングと知識を発信",
+  title: "OB夫婦ブログ | 効果的なトレーニングと知識を発信",
   description: "初心者から上級者まで役立つ筋トレ情報・メニュー・サプリ・器具レビューなどを発信するブログです。",
   openGraph: {
-    title: "筋トレブログ | 効果的なトレーニングと知識を発信",
+    title: "OB夫婦ブログ| 効果的なトレーニングと知識を発信",
     description: "初心者から上級者まで役立つ筋トレ情報・メニュー・サプリ・器具レビューなどを発信するブログです。",
     url: 'https://peaceful-brigadeiros-6717be.netlify.app/', // 後で本番URLに変更
-    siteName: "筋トレブログ",
+    siteName: "OB夫婦ブログ",
     images: [ // <--- OGP画像の追加
       {
         url: '/og-image.png', // /public/og-image.png などのパスを指定
         width: 1200,
         height: 630,
-        alt: '筋トレブログのOGP画像',
+        alt: 'OB夫婦ブログのOGP画像',
       },
     ],
     locale: "ja_JP",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image", // または "summary"
-    title: "筋トレブログ | 効果的なトレーニングと知識を発信",
+    title: "OB夫婦ブログ | 効果的なトレーニングと知識を発信",
     description: "初心者から上級者まで役立つ筋トレ情報・メニュー・サプリ・器具レビューなどを発信するブログです。",
     images: ['/twitter-image.png'], // /public/twitter-image.png などのパスを指定 (OGP画像と共通でも可)
     // creator: '@YourTwitterHandle', // サイト運営者のTwitterアカウント

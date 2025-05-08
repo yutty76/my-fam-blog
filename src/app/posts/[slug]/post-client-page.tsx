@@ -24,6 +24,9 @@ const ENDPOINT = `https://${SERVICE_ID}.microcms.io/api/v1/blogs`;
 function extractMarkdownFromHTML(html: string): string {
   if (!html) return '';
   
+  // ★追加: 空の<p>タグや &nbsp; のみの<p>タグを削除
+  html = html.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
+
   html = html.replace(/!\[(.*?)\]\(<a href="([^"]+)">[^<]+<\/a>\)/g, '![$1]($2)');
   html = html.replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/g, '[$2]($1)');
   
@@ -67,6 +70,10 @@ function extractMarkdownFromHTML(html: string): string {
 function decodeHtmlEntities(html: string): string {
   if (!html) return '';
   let result = html;
+
+  // ★追加: 空の<p>タグや &nbsp; のみの<p>タグを削除
+  result = result.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
+
   const entities: Record<string, string> = {
     '&lt;': '<', '&gt;': '>', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&nbsp;': ' '
   };
@@ -81,6 +88,10 @@ function decodeHtmlEntities(html: string): string {
 function prepareMarkdownContent(html: string): string {
   if (!html) return '';
   let result = html;
+
+  // ★追加: 空の<p>タグや &nbsp; のみの<p>タグを削除
+  result = result.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
+
   result = result.replace(/<figure>([\s\S]*?)<\/figure>/g, (match, content) => {
     const imgMatch = content.match(/!\[(.*?)\]\((.*?)\)/);
     if (imgMatch) return imgMatch[0];
