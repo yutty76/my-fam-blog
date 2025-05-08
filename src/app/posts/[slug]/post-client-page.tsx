@@ -24,9 +24,17 @@ const ENDPOINT = `https://${SERVICE_ID}.microcms.io/api/v1/blogs`;
 function extractMarkdownFromHTML(html: string): string {
   if (!html) return '';
   
-  
+  // ★追加: 空の<p>タグや &nbsp; のみの<p>タグを削除
+  html = html.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
   // ★追加: <br>のみを含む空の<p>タグを削除
   html = html.replace(/<p>\s*(?:<br\s*\/?>\s*)*<\/p>/gi, '');
+  // ★追加: h1, h2, h3, h4, h5, h6, pタグを囲む余計な<p>タグを削除
+  html = html.replace(/<p>\s*(<h[1-6].*?>.*?<\/h[1-6]>)\s*<\/p>/gi, '$1');
+  html = html.replace(/<p>\s*(<p>.*?<\/p>)\s*<\/p>/gi, '$1');
+  // ★追加: tableを囲む余計な<p>タグを削除
+  html = html.replace(/<p>\s*(<table.*?>.*?<\/table>)\s*<\/p>/gi, '$1');
+  // ★追加: ulやolを囲む余計な<p>タグも削除
+  html = html.replace(/<p>\s*(<[ou]l>.*?<\/[ou]l>)\s*<\/p>/gi, '$1');
 
   html = html.replace(/!\[(.*?)\]\(<a href="([^"]+)">[^<]+<\/a>\)/g, '![$1]($2)');
   html = html.replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/g, '[$2]($1)');
@@ -76,6 +84,13 @@ function decodeHtmlEntities(html: string): string {
   result = result.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
   // ★追加: <br>のみを含む空の<p>タグを削除
   result = result.replace(/<p>\s*(?:<br\s*\/?>\s*)*<\/p>/gi, '');
+  // ★追加: h1, h2, h3, h4, h5, h6, pタグを囲む余計な<p>タグを削除
+  result = result.replace(/<p>\s*(<h[1-6].*?>.*?<\/h[1-6]>)\s*<\/p>/gi, '$1');
+  result = result.replace(/<p>\s*(<p>.*?<\/p>)\s*<\/p>/gi, '$1');
+  // ★追加: tableを囲む余計な<p>タグを削除
+  result = result.replace(/<p>\s*(<table.*?>.*?<\/table>)\s*<\/p>/gi, '$1');
+  // ★追加: ulやolを囲む余計な<p>タグも削除
+  result = result.replace(/<p>\s*(<[ou]l>.*?<\/[ou]l>)\s*<\/p>/gi, '$1');
 
   const entities: Record<string, string> = {
     '&lt;': '<', '&gt;': '>', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&nbsp;': ' '
@@ -96,6 +111,13 @@ function prepareMarkdownContent(html: string): string {
   result = result.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
   // ★追加: <br>のみを含む空の<p>タグを削除
   result = result.replace(/<p>\s*(?:<br\s*\/?>\s*)*<\/p>/gi, '');
+  // ★追加: h1, h2, h3, h4, h5, h6, pタグを囲む余計な<p>タグを削除
+  result = result.replace(/<p>\s*(<h[1-6].*?>.*?<\/h[1-6]>)\s*<\/p>/gi, '$1');
+  result = result.replace(/<p>\s*(<p>.*?<\/p>)\s*<\/p>/gi, '$1');
+  // ★追加: tableを囲む余計な<p>タグを削除
+  result = result.replace(/<p>\s*(<table.*?>.*?<\/table>)\s*<\/p>/gi, '$1');
+  // ★追加: ulやolを囲む余計な<p>タグも削除
+  result = result.replace(/<p>\s*(<[ou]l>.*?<\/[ou]l>)\s*<\/p>/gi, '$1');
 
   result = result.replace(/<figure>([\s\S]*?)<\/figure>/g, (match, content) => {
     const imgMatch = content.match(/!\[(.*?)\]\((.*?)\)/);
@@ -210,11 +232,17 @@ export default function PostClientPage({ slug }: { slug: string }) {
       })
       .then(data => {
         let cleanedContent = data.content || '';
-        // ★追加: data.content を受け取った直後にクリーニング処理
+        // データ取得直後にクリーニング処理
         if (cleanedContent) {
           cleanedContent = cleanedContent.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
-          // ★追加: <br>のみを含む空の<p>タグを削除
           cleanedContent = cleanedContent.replace(/<p>\s*(?:<br\s*\/?>\s*)*<\/p>/gi, '');
+          // ★追加: h1, h2, h3, h4, h5, h6, pタグを囲む余計な<p>タグを削除
+          cleanedContent = cleanedContent.replace(/<p>\s*(<h[1-6].*?>.*?<\/h[1-6]>)\s*<\/p>/gi, '$1');
+          cleanedContent = cleanedContent.replace(/<p>\s*(<p>.*?<\/p>)\s*<\/p>/gi, '$1');
+          // ★追加: tableを囲む余計な<p>タグを削除
+          cleanedContent = cleanedContent.replace(/<p>\s*(<table.*?>.*?<\/table>)\s*<\/p>/gi, '$1');
+          // ★追加: ulやolを囲む余計な<p>タグも削除
+          cleanedContent = cleanedContent.replace(/<p>\s*(<[ou]l>.*?<\/[ou]l>)\s*<\/p>/gi, '$1');
         }
 
         setPost({ ...data, content: cleanedContent }); // クリーンなコンテンツでpostを更新
