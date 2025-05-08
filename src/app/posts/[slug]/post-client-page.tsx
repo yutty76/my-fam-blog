@@ -204,27 +204,37 @@ export default function PostClientPage({ slug }: { slug: string }) {
         return res.json();
       })
       .then(data => {
-        setPost(data);
-        if (data.content) {
+        let cleanedContent = data.content || '';
+        // ★追加: data.content を受け取った直後にクリーニング処理
+        if (cleanedContent) {
+          cleanedContent = cleanedContent.replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '');
+        }
+
+        setPost({ ...data, content: cleanedContent }); // クリーンなコンテンツでpostを更新
+
+        if (cleanedContent) { // クリーンなコンテンツを使用
           const currentArticleType = getArticleTypeValue(data.articleType);
           switch (currentArticleType) {
             case 'マークダウン':
-              const preparedMarkdown = prepareMarkdownContent(data.content);
+              const preparedMarkdown = prepareMarkdownContent(cleanedContent);
               setMarkdownContent(preparedMarkdown);
               setContentToDisplay('');
               break;
             case 'HTML':
-              const decodedHTML = decodeHtmlEntities(data.content);
+              const decodedHTML = decodeHtmlEntities(cleanedContent);
               setContentToDisplay(decodedHTML);
               setMarkdownContent('');
               break;
             case '普通の文章':
             default:
-              const markdown = extractMarkdownFromHTML(data.content);
+              const markdown = extractMarkdownFromHTML(cleanedContent);
               setMarkdownContent(markdown);
               setContentToDisplay('');
               break;
           }
+        } else {
+          setMarkdownContent('');
+          setContentToDisplay('');
         }
         setLoading(false);
       })
